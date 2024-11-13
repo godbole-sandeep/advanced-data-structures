@@ -1,1 +1,19 @@
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+    Node(int value) : data(value), left(nullptr), right(nullptr) {}
+};
 
+class BST {
+public:
+    BST();
+    ~BST();
+public:
+    void Add(int value);
+    void Delete(int value);
+public:
+    bool Search(int value);
+private:
+    Node* m_root;
+};
