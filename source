@@ -1,35 +1,15 @@
-void BST::Add(int value) {
-	// Prepare new node
-	Node* newNode = new Node(value);
-
-	// If tree is empty, treat new node as a root node
-	if (m_root == nullptr) {
-		m_root = newNode;
-		return;
-	}
-
-	// Locate the correct parent
+bool BST::Search(int value) {
 	Node* current = m_root;
-	Node* parent = nullptr;
-
 	while (current != nullptr) {
-		parent = current;
-		if (value < current->data) {
+		if (value == current->data) {
+			return true;
+		}
+		else if (value < current->data) {
 			current = current->left;
 		}
-		else if (value > current->data) {
+		else {
 			current = current->right;
 		}
-		else {
-			return; // Value already exists, no duplicates
-		}
 	}
-
-	// Attach node to the located parent
-	if (value < parent->data) {
-		parent->left = newNode;
-	}
-	else {
-		parent->right = newNode;
-	}
+	return false;
 }
