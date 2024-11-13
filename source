@@ -1,15 +1,62 @@
-bool BST::Search(int value) {
-	Node* current = m_root;
-	while (current != nullptr) {
-		if (value == current->data) {
-			return true;
-		}
-		else if (value < current->data) {
+void BST::Delete(int value) {
+	m_root = DeleteNode(m_root, value);
+}
+
+Node* BST::DeleteNode(Node* root, int value) {
+	Node* parent = nullptr;
+	Node* current = root;
+
+	// Locate the node that contains the value
+	while (current != nullptr && current->data != value) {
+		parent = current;
+		if (value < current->data) {
 			current = current->left;
 		}
 		else {
 			current = current->right;
 		}
 	}
-	return false;
+
+	// Value not found
+	if (current == nullptr) {
+		return root; // Value not found
+	}
+
+	// Case 1: Node has no children (leaf node)
+	if (current->left == nullptr && current->right == nullptr) {
+		if (current == root) {
+			delete current;
+			return nullptr;
+		}
+		if (parent->left == current) {
+			parent->left = nullptr;
+		}
+		else {
+			parent->right = nullptr;
+		}
+		delete current;
+	}
+	// Case 2: Node has one child
+	else if (current->left == nullptr || current->right == nullptr) {
+		Node* child = (current->left != nullptr) ? current->left : current->right;
+		if (current == root) {
+			delete current;
+			return child;
+		}
+		if (parent->left == current) {
+			parent->left = child;
+		}
+		else {
+			parent->right = child;
+		}
+		delete current;
+	}
+	// Case 3: Node has two children
+	else {
+		Node* minNode = FindMin(current->right);
+		current->data = minNode->data;
+		current->right = DeleteNode(current->right, minNode->data);
+	}
+
+	return root;
 }
