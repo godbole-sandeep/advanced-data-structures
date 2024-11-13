@@ -1,19 +1,41 @@
-int main() {
-	Graph graph(4);
+Graph::Graph() : m_traversalStrategy(nullptr), m_nextVertex(0) {}
 
-	graph.AddVertex();
-
-    try {
-        graph.AddEdge(0, 1);
-        graph.AddEdge(0, 2);
-        graph.AddEdge(1, 2);
-        graph.AddEdge(2, 3);
-        graph.AddEdge(1, 3);
-        graph.AddEdge(1, 4);
+void Graph::AddEdge(int src, int dest) {
+    if (m_adjList.find(src) == m_adjList.end() || m_adjList.find(dest) == m_adjList.end()) {
+        throw std::invalid_argument("Invalid vertex specified for edge ("
+            + std::to_string(src) + ", " + std::to_string(dest) + ")");
     }
-    catch (const std::out_of_range& e) {
-        std::cerr << "Error: " << e.what() << "\n";
-    }
+    m_adjList[src].push_back(dest);
+    m_adjList[dest].push_back(src); // Assuming undirected graph
+}
 
-	return 0;
+void Graph::RemoveEdge(int src, int dest) {
+    if (m_adjList.find(src) == m_adjList.end() || m_adjList.find(dest) == m_adjList.end()) {
+        throw std::invalid_argument("Invalid vertex specified for edge removal ("
+            + std::to_string(src) + ", " + std::to_string(dest) + ")");
+    }
+    auto& srcNeighbors = m_adjList[src];
+    auto& destNeighbors = m_adjList[dest];
+
+    srcNeighbors.erase(std::remove(srcNeighbors.begin(), srcNeighbors.end(), dest), srcNeighbors.end());
+    destNeighbors.erase(std::remove(destNeighbors.begin(), destNeighbors.end(), src), destNeighbors.end());
+}
+
+
+void Graph::AddVertex() {
+    m_adjList[m_nextVertex] = {};
+    ++m_nextVertex;
+}
+
+void Graph::RemoveVertex(int vertex) {
+    if (m_adjList.find(vertex) == m_adjList.end()) {
+        throw std::invalid_argument("Invalid vertex specified for removal (" + std::to_string(vertex) + ")");
+    }
+    // Remove all edges connected to this vertex
+    for (int neighbor : m_adjList[vertex]) {
+        auto& neighbors = m_adjList[neighbor];
+        neighbors.erase(std::remove(neighbors.begin(), neighbors.end(), vertex), neighbors.end());
+    }
+    // Remove the vertex itself
+    m_adjList.erase(vertex);
 }
