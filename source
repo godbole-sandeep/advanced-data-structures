@@ -1,4 +1,4 @@
-Graph::Graph() : m_traversalStrategy(nullptr), m_nextVertex(0) {}
+Graph::Graph() : m_nextVertex(0) {}
 
 void Graph::AddEdge(int src, int dest) {
     if (m_adjList.find(src) == m_adjList.end() || m_adjList.find(dest) == m_adjList.end()) {
